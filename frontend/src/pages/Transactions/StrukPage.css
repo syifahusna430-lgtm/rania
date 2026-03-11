@@ -1,0 +1,251 @@
+.struk-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #F5E6D3;
+}
+
+.struk-card {
+  background: #FAF0E6;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(139, 90, 43, 0.2);
+  border: 1px solid #E6CCB2;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.struk-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px dashed #D4A76A;
+}
+
+.struk-header h1 {
+  color: #8B5A2B;
+  margin: 0 0 10px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.struk-header p {
+  color: #C49A6C;
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+.struk-info {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #F5E6D3;
+  border-radius: 12px;
+  border: 1px solid #E6CCB2;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  color: #5D3A1A;
+  font-size: 0.95rem;
+}
+
+.info-row span:first-child {
+  font-weight: 600;
+  color: #8B5A2B;
+}
+
+.payment-badge {
+  background: #8B5A2B;
+  color: #FAF0E6;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.struk-items {
+  margin-bottom: 30px;
+}
+
+.struk-items table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.struk-items th {
+  text-align: left;
+  padding: 10px 5px;
+  color: #8B5A2B;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #D4A76A;
+}
+
+.struk-items td {
+  padding: 10px 5px;
+  color: #5D3A1A;
+  border-bottom: 1px dashed #E6CCB2;
+  font-size: 0.95rem;
+}
+
+.struk-items td small {
+  color: #C49A6C;
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.struk-items td:last-child,
+.struk-items th:last-child {
+  text-align: right;
+}
+
+.struk-summary {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #F5E6D3;
+  border-radius: 12px;
+  border: 1px solid #E6CCB2;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  color: #5D3A1A;
+  font-size: 1rem;
+}
+
+.summary-row.total {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #8B5A2B;
+  border-top: 2px solid #D4A76A;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.total-amount {
+  color: #27ae60;
+}
+
+.struk-footer {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-top: 2px dashed #D4A76A;
+  border-bottom: 2px dashed #D4A76A;
+}
+
+.struk-footer p {
+  color: #8B5A2B;
+  margin: 8px 0;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.struk-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-close, .btn-print {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.btn-close {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-close:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.btn-print {
+  background: #8B5A2B;
+  color: white;
+}
+
+.btn-print:hover {
+  background: #C49A6C;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(139, 90, 43, 0.3);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #F5E6D3;
+}
+
+/* Print Styles */
+@media print {
+  .struk-actions {
+    display: none;
+  }
+  
+  .struk-card {
+    box-shadow: none;
+    border: none;
+    padding: 20px;
+  }
+  
+  .struk-container {
+    background: white;
+    padding: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .struk-card {
+    padding: 20px;
+  }
+  
+  .struk-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .struk-items th,
+  .struk-items td {
+    font-size: 0.85rem;
+  }
+  
+  .summary-row.total {
+    font-size: 1.1rem;
+  }
+  
+  .struk-actions {
+    flex-direction: column;
+  }
+}

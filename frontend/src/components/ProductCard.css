@@ -1,0 +1,234 @@
+/* ============= PRODUCT CARD STYLES - TEMA COKLAT/CREAM ============= */
+.product-card {
+  background: #FAF0E6;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  border: 1px solid #E6CCB2;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(139, 90, 43, 0.25);
+}
+
+.product-image {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background: #F5E6D3;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.05);
+}
+
+.stock-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: #FAF0E6;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stock-badge.habis {
+  background-color: #C49A6C;
+}
+
+.stock-badge.kritis {
+  background-color: #D4A76A;
+}
+
+.stock-badge.menipis {
+  background-color: #E6CCB2;
+  color: #5D3A1A;
+}
+
+.stock-badge.tersedia {
+  background-color: #8B5A2B;
+}
+
+.product-info {
+  padding: 20px;
+}
+
+.product-title {
+  margin: 0 0 10px;
+  color: #5D3A1A;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.product-description {
+  color: #C49A6C;
+  font-size: 0.9rem;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.product-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+}
+
+.product-price {
+  color: #8B5A2B;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.product-stock {
+  font-size: 0.9rem;
+  color: #D4A76A;
+  font-weight: bold;
+}
+
+.product-stock.low-stock {
+  color: #C49A6C;
+}
+
+.product-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-cart, .btn-buy {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+
+.btn-cart {
+  background: #D4A76A;
+  color: #5D3A1A;
+  border: 1px solid #C49A6C;
+}
+
+.btn-cart:hover:not(:disabled) {
+  background: #C49A6C;
+  color: #FAF0E6;
+}
+
+.btn-buy {
+  background: #8B5A2B;
+  color: #FAF0E6;
+}
+
+.btn-buy:hover:not(:disabled) {
+  background: #C49A6C;
+}
+
+.btn-cart:disabled, .btn-buy:disabled {
+  background: #E6CCB2;
+  color: #C49A6C;
+  cursor: not-allowed;
+  opacity: 0.7;
+  border: 1px solid #D4A76A;
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 15px;
+  background: #F5E6D3;
+  padding: 5px;
+  border-radius: 8px;
+  border: 1px solid #D4A76A;
+}
+
+.qty-btn {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: #FAF0E6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 1px 3px rgba(139, 90, 43, 0.2);
+  transition: all 0.3s;
+  color: #5D3A1A;
+  border: 1px solid #D4A76A;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: #D4A76A;
+  color: #FAF0E6;
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.quantity {
+  min-width: 35px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #5D3A1A;
+}
+
+.add-to-cart-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: #8B5A2B;
+  color: #FAF0E6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  height: 35px;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+  background: #C49A6C;
+}
+
+.add-to-cart-btn:disabled {
+  background: #E6CCB2;
+  color: #C49A6C;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: #C49A6C;
+  color: #FAF0E6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #8B5A2B;
+}

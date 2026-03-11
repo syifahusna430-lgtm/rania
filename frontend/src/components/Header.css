@@ -1,0 +1,227 @@
+/* ============= HEADER STYLES - TEMA COKLAT/CREAM ============= */
+.header {
+  background-color: #8B5A2B; /* Coklat tua elegan */
+  color: #FAF0E6; /* Cream putih */
+  padding: 0.8rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Logo dan Role Badge */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+}
+
+.logo {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #FAF0E6;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: #C49A6C; /* Coklat sedang */
+  color: #FAF0E6;
+  white-space: nowrap;
+  border: 1px solid #E6CCB2;
+}
+
+/* Role specific colors - tetap dalam tema coklat */
+.role-admin {
+  background-color: #8B5A2B;
+}
+
+.role-kasir {
+  background-color: #C49A6C;
+}
+
+.role-pembeli {
+  background-color: #D4A76A;
+}
+
+/* Navigasi Menu */
+.nav-menu {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
+}
+
+.nav-menu a {
+  color: #FAF0E6;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-menu a:hover {
+  background-color: #C49A6C;
+  transform: translateY(-1px);
+  color: #FFFFFF;
+}
+
+.nav-menu a.active {
+  background-color: #D4A76A;
+  font-weight: 600;
+  color: #8B5A2B;
+}
+
+/* User Info Section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 200px;
+  justify-content: flex-end;
+}
+
+.username {
+  font-weight: 500;
+  color: #FAF0E6;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+/* Logout Button */
+.logout-btn {
+  background-color: #C49A6C;
+  color: #FAF0E6;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(139, 90, 43, 0.3);
+}
+
+.logout-btn:hover {
+  background-color: #8B5A2B;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 90, 43, 0.4);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+/* Cart Icon untuk Pembeli */
+.cart-icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+  color: #FAF0E6;
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.cart-icon-btn:hover {
+  transform: scale(1.1);
+  background-color: rgba(196, 154, 108, 0.3);
+}
+
+.cart-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #D4A76A;
+  color: #8B5A2B;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 2px solid #8B5A2B;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header {
+    padding: 0.8rem 1.5rem;
+  }
+  
+  .nav-menu a {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .logo {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 1rem;
+  }
+  
+  .logo-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .nav-menu {
+    width: 100%;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .nav-menu a {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+  
+  .user-info {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .username {
+    font-size: 0.85rem;
+  }
+  
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}

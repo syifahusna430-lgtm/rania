@@ -1,3 +1,195 @@
-body {
+/* ============= RESET & GLOBAL STYLES - TEMA COKLAT/CREAM ============= */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #F5E6D3; /* Cream background utama */
+  color: #5D3A1A; /* Coklat gelap untuk teks */
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Link Styles */
+a {
+  text-decoration: none;
+  color: #8B5A2B;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #C49A6C;
+}
+
+/* Button Styles */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background-color: #D4A76A;
+  color: #5D3A1A;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #C49A6C;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 90, 43, 0.2);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: #E6CCB2;
+}
+
+/* Loading Spinner - dengan tema coklat */
+.loading-spinner {
+  border: 4px solid #E6CCB2;
+  border-top: 4px solid #8B5A2B;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Card Styles - untuk elemen kotak */
+.card {
+  background-color: #FAF0E6;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.1);
+  border: 1px solid #E6CCB2;
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #FAF0E6;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.1);
+}
+
+th {
+  background-color: #D4A76A;
+  color: #5D3A1A;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #E6CCB2;
+}
+
+tr:hover {
+  background-color: #F5E6D3;
+}
+
+/* Form Styles */
+input, select, textarea {
+  background-color: #FAF0E6;
+  border: 1px solid #D4A76A;
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: #5D3A1A;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #8B5A2B;
+  box-shadow: 0 0 0 2px rgba(139, 90, 43, 0.2);
+}
+
+label {
+  color: #5D3A1A;
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Scrollbar Styling - tema coklat */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E6CCB2;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C49A6C;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B5A2B;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 10px;
+  }
 }

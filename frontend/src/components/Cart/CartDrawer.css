@@ -1,0 +1,269 @@
+/* ============= CART DRAWER STYLES - TEMA COKLAT/CREAM ============= */
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(93, 58, 26, 0.5); /* Coklat transparan */
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background: #FAF0E6;
+  box-shadow: -2px 0 15px rgba(139, 90, 43, 0.2);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cart-header {
+  padding: 20px;
+  border-bottom: 2px solid #E6CCB2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #8B5A2B;
+  color: #FAF0E6;
+}
+
+.cart-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #FAF0E6;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 10px;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #D4A76A;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8B5A2B;
+}
+
+.empty-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty-cart p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #5D3A1A;
+}
+
+.empty-cart small {
+  color: #C49A6C;
+}
+
+.cart-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px 0;
+  border-bottom: 1px solid #E6CCB2;
+  animation: fadeIn 0.3s ease;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #F5E6D3;
+  border: 1px solid #D4A76A;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details h4 {
+  margin: 0 0 5px;
+  color: #5D3A1A;
+  font-size: 1rem;
+}
+
+.item-price {
+  color: #8B5A2B;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid #D4A76A;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #F5E6D3;
+}
+
+.qty-btn {
+  background: #F5E6D3;
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background 0.3s;
+  color: #5D3A1A;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: #D4A76A;
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.quantity {
+  padding: 5px 10px;
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+  color: #5D3A1A;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px;
+  color: #8B5A2B;
+  transition: transform 0.3s;
+}
+
+.remove-btn:hover {
+  transform: scale(1.1);
+  color: #C49A6C;
+}
+
+.stock-info {
+  color: #C49A6C;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.cart-summary {
+  padding: 20px;
+  border-top: 2px solid #E6CCB2;
+  background: #F5E6D3;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #5D3A1A;
+}
+
+.summary-row.total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #8B5A2B;
+  border-top: 1px solid #D4A76A;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.cart-actions {
+  padding: 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #E6CCB2;
+}
+
+.clear-btn {
+  flex: 1;
+  padding: 12px;
+  background: #C49A6C;
+  color: #FAF0E6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.clear-btn:hover {
+  background: #8B5A2B;
+}
+
+.checkout-btn {
+  flex: 2;
+  padding: 12px;
+  background: #D4A76A;
+  color: #5D3A1A;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.checkout-btn:hover {
+  background: #8B5A2B;
+  color: #FAF0E6;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .cart-drawer {
+    width: 100%;
+  }
+}
