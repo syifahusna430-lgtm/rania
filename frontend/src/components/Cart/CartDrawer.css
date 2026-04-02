@@ -1,11 +1,10 @@
-/* ============= CART DRAWER STYLES - TEMA COKLAT/CREAM ============= */
 .cart-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(93, 58, 26, 0.5); /* Coklat transparan */
+  background-color: rgba(93, 58, 26, 0.5);
   z-index: 1000;
   animation: fadeIn 0.3s ease;
 }
@@ -14,7 +13,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 400px;
+  width: 420px;
   height: 100vh;
   background: #FAF0E6;
   box-shadow: -2px 0 15px rgba(139, 90, 43, 0.2);
@@ -71,12 +70,14 @@
   color: #D4A76A;
 }
 
+/* Cart Items Container */
 .cart-items {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
 }
 
+/* Empty Cart */
 .empty-cart {
   text-align: center;
   padding: 40px 20px;
@@ -100,6 +101,7 @@
   color: #C49A6C;
 }
 
+/* Cart Item dengan Gambar */
 .cart-item {
   display: flex;
   gap: 15px;
@@ -108,43 +110,62 @@
   animation: fadeIn 0.3s ease;
 }
 
-.item-image {
+/* Gambar Produk */
+.cart-item-image {
   width: 80px;
   height: 80px;
-  object-fit: cover;
+  flex-shrink: 0;
+  background: #f5f5f5;
   border-radius: 8px;
-  background: #F5E6D3;
-  border: 1px solid #D4A76A;
+  overflow: hidden;
+  border: 1px solid #E6CCB2;
 }
 
-.item-details {
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Detail Item */
+.cart-item-details {
   flex: 1;
 }
 
-.item-details h4 {
+.cart-item-name {
   margin: 0 0 5px;
   color: #5D3A1A;
   font-size: 1rem;
+  font-weight: 600;
 }
 
-.item-price {
+.cart-item-price {
   color: #8B5A2B;
   font-weight: bold;
   margin: 5px 0;
+  font-size: 1rem;
 }
 
-.item-actions {
+.cart-item-stock {
+  color: #C49A6C;
+  font-size: 0.75rem;
+  margin: 3px 0;
+}
+
+/* Item Actions */
+.cart-item-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
   margin-top: 10px;
+  gap: 10px;
 }
 
 .quantity-control {
   display: flex;
   align-items: center;
   border: 1px solid #D4A76A;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
   background: #F5E6D3;
 }
@@ -162,10 +183,11 @@
 
 .qty-btn:hover:not(:disabled) {
   background: #D4A76A;
+  color: white;
 }
 
 .qty-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -180,25 +202,19 @@
 .remove-btn {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 5px;
-  color: #8B5A2B;
-  transition: transform 0.3s;
+  padding: 5px 10px;
+  color: #e74c3c;
+  transition: all 0.2s;
+  border-radius: 4px;
 }
 
 .remove-btn:hover {
-  transform: scale(1.1);
-  color: #C49A6C;
+  background: #fadbd8;
 }
 
-.stock-info {
-  color: #C49A6C;
-  font-size: 0.8rem;
-  margin-top: 5px;
-  display: block;
-}
-
+/* Cart Summary */
 .cart-summary {
   padding: 20px;
   border-top: 2px solid #E6CCB2;
@@ -221,6 +237,7 @@
   margin-top: 10px;
 }
 
+/* Cart Actions */
 .cart-actions {
   padding: 20px;
   display: flex;
@@ -231,39 +248,74 @@
 .clear-btn {
   flex: 1;
   padding: 12px;
-  background: #C49A6C;
-  color: #FAF0E6;
+  background: #e74c3c;
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s;
 }
 
 .clear-btn:hover {
-  background: #8B5A2B;
+  background: #c0392b;
 }
 
 .checkout-btn {
   flex: 2;
   padding: 12px;
-  background: #D4A76A;
-  color: #5D3A1A;
+  background: #27ae60;
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s;
 }
 
 .checkout-btn:hover {
+  background: #219a52;
+}
+
+/* Scrollbar */
+.cart-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart-items::-webkit-scrollbar-track {
+  background: #F5E6D3;
+  border-radius: 3px;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+  background: #D4A76A;
+  border-radius: 3px;
+}
+
+.cart-items::-webkit-scrollbar-thumb:hover {
   background: #8B5A2B;
-  color: #FAF0E6;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
   .cart-drawer {
     width: 100%;
+  }
+  
+  .cart-item {
+    flex-wrap: wrap;
+  }
+  
+  .cart-item-image {
+    width: 100%;
+    height: 150px;
+  }
+  
+  .cart-item-actions {
+    flex-wrap: wrap;
+  }
+  
+  .cart-actions {
+    flex-direction: column;
   }
 }

@@ -13,7 +13,9 @@ function KasirPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [customerName, setCustomerName] = useState('');
+  const [customerType, setCustomerType] = useState('Guest'); // TAMBAH
   const [paymentMethod, setPaymentMethod] = useState('TUNAI');
+  const [paymentAmount, setPaymentAmount] = useState(''); // TAMBAH
   const navigate = useNavigate();
   const role = getRole();
   const username = getUsername();
@@ -35,7 +37,6 @@ function KasirPage() {
         api.get('/categories')
       ]);
       
-      // Extract data
       const productsData = Array.isArray(productsRes.data) ? productsRes.data : 
                           (productsRes.data?.data || []);
       const categoriesData = Array.isArray(categoriesRes.data) ? categoriesRes.data : 
@@ -51,7 +52,13 @@ function KasirPage() {
     }
   };
 
-  // FUNGSI ADD TO CART - TANPA VARIANT
+  const getImageUrl = (product) => {
+    if (product.image_url) {
+      return `http://localhost:3000/images/produk/${product.image_url}`;
+    }
+    return '/images/produk/default.jpg';
+  };
+
   const addToCart = (product) => {
     if (product.stock < 1) {
       alert(`Stok ${product.name} habis!`);
@@ -60,7 +67,6 @@ function KasirPage() {
 
     setCart(prev => {
       const existingItem = prev.find(item => item.id === product.id);
-
       if (existingItem) {
         if (existingItem.quantity + 1 > product.stock) {
           alert(`Stok ${product.name} tidak mencukupi!`);
@@ -72,13 +78,13 @@ function KasirPage() {
             : item
         );
       }
-
       return [...prev, {
         id: product.id,
         name: product.name,
         price: product.price,
         quantity: 1,
-        stock: product.stock
+        stock: product.stock,
+        image_url: product.image_url
       }];
     });
   };
@@ -88,7 +94,6 @@ function KasirPage() {
       removeFromCart(index);
       return;
     }
-
     setCart(prev => {
       const item = prev[index];
       if (newQuantity > item.stock) {
@@ -110,6 +115,7 @@ function KasirPage() {
     if (window.confirm('Kosongkan keranjang?')) {
       setCart([]);
       setCustomerName('');
+      setPaymentAmount('');
     }
   };
 
@@ -118,7 +124,7 @@ function KasirPage() {
   };
 
   const calculateTax = () => {
-    return calculateSubtotal() * 0.1; // Pajak 10%
+    return calculateSubtotal() * 0.1;
   };
 
   const calculateTotal = () => {
@@ -131,55 +137,46 @@ function KasirPage() {
       return;
     }
 
-    if (!customerName.trim()) {
-      alert('Masukkan nama pembeli!');
+    const total = calculateTotal();
+    const paid = parseInt(paymentAmount) || 0;
+    
+    if (paid < total) {
+      alert(`Jumlah bayar kurang! Total: Rp ${total.toLocaleString()}`);
       return;
     }
 
     try {
-      const subtotal = calculateSubtotal();
-      const tax = calculateTax();
-      const total = calculateTotal();
-
       const transactionData = {
-        buyer_name: customerName,
+        buyer_name: customerType === 'Guest' ? (customerName || 'Guest') : (customerName || 'Member'),
         items: cart.map(item => ({
           product_id: item.id,
           qty: item.quantity,
           price: item.price
         })),
         payment_method: paymentMethod,
-        subtotal: subtotal,
-        tax: tax,
-        total: total
+        subtotal: calculateSubtotal(),
+        tax: calculateTax(),
+        total: total,
+        paid: paid,
+        change: paid - total
       };
 
-      console.log('Mengirim transaksi:', transactionData);
-
-      // Simpan transaksi ke database
       const response = await api.post('/transactions', transactionData);
       
-      // Simpan data struk ke localStorage untuk preview
       localStorage.setItem('lastTransaction', JSON.stringify({
         id: response.data.id,
         items: cart,
-        customerName: customerName,
+        customerName: customerType === 'Guest' ? (customerName || 'Guest') : (customerName || 'Member'),
         paymentMethod: paymentMethod,
-        subtotal: subtotal,
-        tax: tax,
+        subtotal: calculateSubtotal(),
+        tax: calculateTax(),
         total: total,
-        date: new Date().toLocaleString('id-ID', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }),
+        paid: paid,
+        change: paid - total,
+        date: new Date().toLocaleString('id-ID'),
         cashier: username
       }));
 
-      // Redirect ke halaman struk
       navigate('/transactions/struk');
       
     } catch (error) {
@@ -214,7 +211,7 @@ function KasirPage() {
 
   return (
     <div className="kasir-page">
-      {/* Header */}
+      {/* HEADER */}
       <div className="kasir-header">
         <div>
           <h1>🏺 TOKO GERABAH</h1>
@@ -229,11 +226,10 @@ function KasirPage() {
       </div>
 
       <div className="kasir-content">
-        {/* Left Panel - Daftar Produk */}
+        {/* LEFT PANEL - DAFTAR PRODUK */}
         <div className="products-panel">
           <h2>📋 Daftar Produk Gerabah</h2>
           
-          {/* Search & Filter */}
           <div className="product-filters">
             <input
               type="text"
@@ -254,7 +250,6 @@ function KasirPage() {
             </select>
           </div>
 
-          {/* Product Grid */}
           <div className="product-grid-scroll">
             <div className="product-grid">
               {filteredProducts.length === 0 ? (
@@ -262,6 +257,14 @@ function KasirPage() {
               ) : (
                 filteredProducts.map(product => (
                   <div key={product.id} className="product-item">
+                    <div className="product-image-container">
+                      <img 
+                        src={getImageUrl(product)}
+                        alt={product.name}
+                        className="product-image"
+                        onError={(e) => { e.target.src = '/images/produk/default.jpg'; }}
+                      />
+                    </div>
                     <div className="product-info">
                       <h3>{product.name}</h3>
                       <p className="product-price">{formatRupiah(product.price)}</p>
@@ -285,14 +288,18 @@ function KasirPage() {
           </div>
         </div>
 
-        {/* Right Panel - Keranjang */}
+        {/* RIGHT PANEL - CURRENT ORDER */}
         <div className="cart-panel">
           <KasirCart
             cart={cart}
             customerName={customerName}
             setCustomerName={setCustomerName}
+            customerType={customerType}
+            setCustomerType={setCustomerType}
             paymentMethod={paymentMethod}
             setPaymentMethod={setPaymentMethod}
+            paymentAmount={paymentAmount}
+            setPaymentAmount={setPaymentAmount}
             updateQuantity={updateQuantity}
             removeFromCart={removeFromCart}
             clearCart={clearCart}

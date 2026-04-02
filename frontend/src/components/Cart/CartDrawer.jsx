@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/CartContext';  // ✅ Naik 2 level (ke src/)
 import './CartDrawer.css';
 
 const CartDrawer = () => {
@@ -19,6 +19,14 @@ const CartDrawer = () => {
       currency: 'IDR',
       minimumFractionDigits: 0
     }).format(number);
+  };
+
+  // Fungsi untuk mendapatkan URL gambar dari backend
+  const getImageUrl = (item) => {
+    if (item.image_url) {
+      return `http://localhost:3000/images/produk/${item.image_url}`;
+    }
+    return '/images/produk/default.jpg';
   };
 
   const handleCheckout = () => {
@@ -55,18 +63,23 @@ const CartDrawer = () => {
           ) : (
             cartItems.map(item => (
               <div key={item.id} className="cart-item">
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="item-image"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/100x100?text=Produk';
-                  }}
-                />
-                <div className="item-details">
-                  <h4>{item.name}</h4>
-                  <p className="item-price">{formatRupiah(item.price)}</p>
-                  <div className="item-actions">
+                {/* GAMBAR PRODUK */}
+                <div className="cart-item-image">
+                  <img 
+                    src={getImageUrl(item)}
+                    alt={item.name}
+                    onError={(e) => {
+                      e.target.src = '/images/produk/default.jpg';
+                    }}
+                  />
+                </div>
+                
+                <div className="cart-item-details">
+                  <h4 className="cart-item-name">{item.name}</h4>
+                  <p className="cart-item-price">{formatRupiah(item.price)}</p>
+                  <p className="cart-item-stock">Stok: {item.stock}</p>
+                  
+                  <div className="cart-item-actions">
                     <div className="quantity-control">
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -82,12 +95,10 @@ const CartDrawer = () => {
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       className="remove-btn"
-                      title="Hapus"
                     >
-                      🗑️
+                      🗑️ Hapus
                     </button>
                   </div>
-                  <small className="stock-info">Stok: {item.stock}</small>
                 </div>
               </div>
             ))

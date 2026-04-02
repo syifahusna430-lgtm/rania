@@ -14,8 +14,12 @@ function ProductsPage() {
     name: '',
     price: '',
     stock: '',
-    category_id: ''
+    category_id: '',
+    description: '',
+    image: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,126 +31,137 @@ function ProductsPage() {
     fetchData();
   }, []);
 
-  // Fungsi untuk mengekstrak data dari response API
   const extractData = (response) => {
     if (!response) return [];
-    
-    // Jika response adalah array langsung
     if (Array.isArray(response)) return response;
-    
-    // Jika response punya property data yang array
-    if (response.data && Array.isArray(response.data)) return response.data;
-    
-    // Jika response punya property rows (untuk PostgreSQL)
-    if (response.rows && Array.isArray(response.rows)) return response.rows;
-    
-    // Jika response punya property products
-    if (response.products && Array.isArray(response.products)) return response.products;
-    
-    console.warn('Struktur response tidak dikenal:', response);
+    if (response?.data && Array.isArray(response.data)) return response.data;
+    if (response?.rows && Array.isArray(response.rows)) return response.rows;
     return [];
-  };
-
-  // Fungsi untuk format harga (tampilan dengan titik)
-  const formatPriceInput = (value) => {
-    if (!value) return '';
-    // Hapus semua karakter non-digit
-    const number = value.replace(/[^\d]/g, '');
-    // Format dengan titik setiap 3 digit dari belakang
-    return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  };
-
-  // Handler untuk input harga
-  const handlePriceChange = (e) => {
-    const rawValue = e.target.value;
-    // Hanya ambil angka saja untuk disimpan di state
-    const numberValue = rawValue.replace(/[^\d]/g, '');
-    setFormData({...formData, price: numberValue});
-  };
-
-  // Handler untuk input stok (tetap number)
-  const handleStockChange = (e) => {
-    setFormData({...formData, stock: e.target.value});
   };
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      
       const [productsRes, categoriesRes] = await Promise.all([
         api.get('/products'),
         api.get('/categories')
       ]);
-
-      console.log('Products response:', productsRes.data);
-      console.log('Categories response:', categoriesRes.data);
-
-      // Ekstrak data dengan fungsi di atas
       const productsData = extractData(productsRes.data);
       const categoriesData = extractData(categoriesRes.data);
-
       setProducts(productsData);
       setCategories(categoriesData);
-      
     } catch (error) {
       console.error('Gagal fetch data:', error);
-      
-      // Data dummy sesuai database kamu
-      setProducts([
-        { id: 1, name: 'Vas Bunga Besar', price: 50000, stock: 20, category_id: 1 },
-        { id: 2, name: 'Vas Motif Jawa', price: 60000, stock: 15, category_id: 1 },
-        { id: 3, name: 'Piring Hias Klasik', price: 30000, stock: 30, category_id: 2 },
-        { id: 4, name: 'Piring Motif Bunga', price: 35000, stock: 25, category_id: 2 },
-        { id: 5, name: 'Guci Besar Antik', price: 150000, stock: 10, category_id: 3 },
-        { id: 6, name: 'Guci Kecil Antik', price: 100000, stock: 12, category_id: 3 },
-        { id: 7, name: 'Kendi Air Tradisional', price: 40000, stock: 20, category_id: 4 },
-        { id: 8, name: 'Kendi Mini', price: 30000, stock: 25, category_id: 4 },
-        { id: 9, name: 'Patung Tanah Liat', price: 80000, stock: 15, category_id: 5 },
-        { id: 10, name: 'Patung Mini Hias', price: 50000, stock: 18, category_id: 5 }
-      ]);
-      
-      setCategories([
-        { id: 1, name: 'Vas' },
-        { id: 2, name: 'Piring' },
-        { id: 3, name: 'Guci' },
-        { id: 4, name: 'Kendi' },
-        { id: 5, name: 'Patung' }
-      ]);
     } finally {
       setLoading(false);
     }
   };
 
+  const formatPriceInput = (value) => {
+    if (!value) return '';
+    const number = value.replace(/[^\d]/g, '');
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  const getStockStatus = (stock) => {
+    if (stock === 0) return { text: 'Tidak Tersedia', class: 'out-of-stock', badgeClass: 'danger' };
+    if (stock < 5) return { text: 'Hampir Habis', class: 'almost-out', badgeClass: 'warning' };
+    if (stock < 10) return { text: 'Menipis', class: 'low', badgeClass: 'warning' };
+    return { text: 'Tersedia', class: 'available', badgeClass: 'success' };
+  };
+
+  const handlePriceChange = (e) => {
+    const rawValue = e.target.value;
+    const numberValue = rawValue.replace(/[^\d]/g, '');
+    setFormData({ ...formData, price: numberValue });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.match('image.*')) {
+        alert('File harus berupa gambar!');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file maksimal 2MB!');
+        return;
+      }
+      setFormData({ ...formData, image: file });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUploading(true);
     try {
-      // KONVERSI DATA SEBELUM DIKIRIM KE BACKEND
-      const dataToSend = {
-        name: formData.name,
-        // Pastikan price adalah integer (tanpa titik)
-        price: parseInt(formData.price) || 0,
-        // Pastikan stock adalah integer
-        stock: parseInt(formData.stock) || 0,
-        // Pastikan category_id adalah integer
-        category_id: parseInt(formData.category_id)
-      };
+      if (!formData.name.trim()) {
+        alert('Nama produk harus diisi!');
+        setUploading(false);
+        return;
+      }
+      if (!formData.price || parseInt(formData.price) <= 0) {
+        alert('Harga harus diisi dengan angka valid!');
+        setUploading(false);
+        return;
+      }
+      if (!formData.stock || parseInt(formData.stock) < 0) {
+        alert('Stok harus diisi!');
+        setUploading(false);
+        return;
+      }
+      if (!formData.category_id) {
+        alert('Kategori harus dipilih!');
+        setUploading(false);
+        return;
+      }
 
-      console.log('Data yang dikirim ke backend:', dataToSend);
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name.trim());
+      formDataToSend.append('price', parseInt(formData.price) || 0);
+      formDataToSend.append('stock', parseInt(formData.stock) || 0);
+      formDataToSend.append('category_id', parseInt(formData.category_id));
+      formDataToSend.append('description', formData.description || '');
+      if (formData.image) {
+        formDataToSend.append('image', formData.image);
+      }
 
       if (editingProduct) {
-        await api.put(`/products/${editingProduct.id}`, dataToSend);
+        await api.put(`/products/${editingProduct.id}`, formDataToSend, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         alert('✅ Produk berhasil diupdate');
       } else {
-        await api.post('/products', dataToSend);
+        await api.post('/products', formDataToSend, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         alert('✅ Produk berhasil ditambahkan');
       }
+
       setShowForm(false);
       setEditingProduct(null);
-      setFormData({ name: '', price: '', stock: '', category_id: '' });
+      setFormData({ name: '', price: '', stock: '', category_id: '', description: '', image: null });
+      setImagePreview(null);
       fetchData();
     } catch (error) {
       console.error('Error detail:', error.response?.data);
-      alert('❌ Gagal: ' + (error.response?.data?.message || 'Server error'));
+      if (error.response?.data?.message) {
+        alert('❌ Gagal: ' + error.response.data.message);
+      } else {
+        alert('❌ Gagal: ' + (error.message || 'Server error'));
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -169,78 +184,79 @@ function ProductsPage() {
     }).format(number);
   };
 
-  // Validasi apakah products adalah array
+  const getImageUrl = (product) => {
+    if (product.image_url) {
+      return `http://localhost:3000/images/produk/${product.image_url}`;
+    }
+    return '/images/produk/default.jpg';
+  };
+
   if (!Array.isArray(products)) {
-    console.error('Products bukan array:', products);
     return (
       <div style={{ padding: '30px', textAlign: 'center' }}>
-        <h2>Error: Data produk tidak valid</h2>
+        <h2 style={{ color: '#e74c3c' }}>Error: Data produk tidak valid</h2>
         <button onClick={() => window.location.reload()}>Muat Ulang</button>
       </div>
     );
   }
 
-  if (loading) return (
-    <div style={{ padding: '50px', textAlign: 'center' }}>
-      <div className="loading-spinner"></div>
-      <p>Loading produk...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#F5E6D3' }}>
+        <div className="loading-spinner"></div>
+        <p>Loading produk...</p>
+      </div>
+    );
+  }
 
   // TAMPILAN DETAIL PRODUK
   if (viewDetail) {
     const product = products.find(p => p.id === viewDetail);
     if (!product) return <div>Produk tidak ditemukan</div>;
-    
     const category = categories.find(c => c.id === product.category_id);
+    const stockStatus = getStockStatus(product.stock);
     
     return (
       <div style={{ padding: '30px', maxWidth: '600px', margin: '0 auto' }}>
         <h1>Detail Produk</h1>
-        <div style={{ 
-          background: 'white', 
-          padding: '30px', 
-          borderRadius: '10px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-        }}>
-          <p><strong>ID:</strong> {product.id}</p>
+        <div style={{ background: 'white', padding: '30px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <img src={getImageUrl(product)} alt={product.name} style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '8px' }} onError={(e) => { e.target.src = '/images/produk/default.jpg'; }} />
+          </div>
           <p><strong>Nama Produk:</strong> {product.name}</p>
           <p><strong>Harga:</strong> {formatRupiah(product.price)}</p>
           <p><strong>Stok:</strong> {product.stock}</p>
+          <p><strong>Status:</strong> 
+            <span style={{ marginLeft: '10px', padding: '4px 12px', borderRadius: '20px', background: stockStatus.badgeClass === 'danger' ? '#f8d7da' : stockStatus.badgeClass === 'warning' ? '#fff3cd' : '#d4edda', color: stockStatus.badgeClass === 'danger' ? '#721c24' : stockStatus.badgeClass === 'warning' ? '#856404' : '#155724', fontWeight: 'bold' }}>
+              {stockStatus.text}
+            </span>
+          </p>
           <p><strong>Kategori:</strong> {category?.name || '-'}</p>
+          {product.description && (
+            <div>
+              <p><strong>Deskripsi:</strong></p>
+              <p>{product.description}</p>
+            </div>
+          )}
         </div>
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={() => setViewDetail(null)}>Kembali</button>
-        </div>
+        <button onClick={() => setViewDetail(null)}>Kembali</button>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '30px' }}>
+    <div style={{ padding: '30px', backgroundColor: '#F5E6D3', minHeight: '100vh' }}>
       {/* HEADER */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '20px' 
-      }}>
-        <h1>📦 Manajemen Produk</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h1 style={{ color: '#8B5A2B' }}>📦 Manajemen Produk</h1>
         <button 
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: '', price: '', stock: '', category_id: '' });
+            setFormData({ name: '', price: '', stock: '', category_id: '', description: '', image: null });
+            setImagePreview(null);
             setShowForm(!showForm);
           }}
-          style={{
-            padding: '10px 20px',
-            background: showForm ? '#e74c3c' : '#27ae60',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
+          style={{ padding: '10px 20px', background: showForm ? '#e74c3c' : '#27ae60', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
         >
           {showForm ? '✕ Batal' : '+ Tambah Produk'}
         </button>
@@ -248,135 +264,61 @@ function ProductsPage() {
 
       {/* FORM TAMBAH/EDIT PRODUK */}
       {showForm && (
-        <div style={{ 
-          background: '#f8f9fa', 
-          padding: '20px', 
-          borderRadius: '8px',
-          marginBottom: '20px' 
-        }}>
-          <h3 style={{ marginTop: 0 }}>
-            {editingProduct ? '✏️ Edit Produk' : '➕ Tambah Produk Baru'}
-          </h3>
-          <form onSubmit={handleSubmit}>
-            {/* Nama Produk */}
+        <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #E6CCB2' }}>
+          <h3>{editingProduct ? '✏️ Edit Produk' : '➕ Tambah Produk Baru'}</h3>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Nama Produk:
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="Masukkan nama produk"
-                required
-                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ced4da' }}
-              />
+              <label>Nama Produk:</label>
+              <input type="text" name="name" value={formData.name} onChange={handleInputChange} required style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6CCB2' }} />
             </div>
-
-            {/* Harga - DIPERBAIKI */}
             <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Harga (Rp):
-              </label>
-              <input
-                type="text"
-                value={formData.price ? formatPriceInput(formData.price) : ''}
-                onChange={handlePriceChange}
-                placeholder="Contoh: 45000"
-                required
-                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ced4da' }}
-              />
-              <small style={{ color: '#6c757d', display: 'block', marginTop: '5px' }}>
-                ⓘ Masukkan angka tanpa titik (contoh: 45000). Akan diformat otomatis.
-              </small>
+              <label>Harga (Rp):</label>
+              <input type="text" name="price" value={formData.price ? formatPriceInput(formData.price) : ''} onChange={handlePriceChange} required style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6CCB2' }} />
+              <small>Masukkan angka tanpa titik</small>
             </div>
-
-            {/* Stok */}
             <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Stok:
-              </label>
-              <input
-                type="number"
-                value={formData.stock}
-                onChange={handleStockChange}
-                placeholder="Masukkan stok"
-                required
-                min="0"
-                step="1"
-                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ced4da' }}
-              />
+              <label>Stok:</label>
+              <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} required min="0" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6CCB2' }} />
             </div>
-
-            {/* Kategori */}
             <div style={{ marginBottom: '15px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                Kategori:
-              </label>
-              <select
-                value={formData.category_id}
-                onChange={(e) => setFormData({...formData, category_id: e.target.value})}
-                required
-                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ced4da' }}
-              >
+              <label>Kategori:</label>
+              <select name="category_id" value={formData.category_id} onChange={handleInputChange} required style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6CCB2' }}>
                 <option value="">Pilih Kategori</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
+                {categories.map(cat => (<option key={cat.id} value={cat.id}>{cat.name}</option>))}
               </select>
             </div>
-
-            {/* Tombol Submit */}
+            <div style={{ marginBottom: '15px' }}>
+              <label>Deskripsi:</label>
+              <textarea name="description" value={formData.description} onChange={handleInputChange} rows="4" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #E6CCB2' }} />
+            </div>
+            <div style={{ marginBottom: '20px' }}>
+              <label>Upload Gambar:</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <small>Format: JPG, PNG, GIF. Maksimal 2MB.</small>
+              {imagePreview && (
+                <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                  <img src={imagePreview} alt="Preview" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px' }} />
+                </div>
+              )}
+            </div>
             <div>
-              <button 
-                type="submit"
-                style={{
-                  padding: '10px 20px',
-                  background: '#3498db',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  marginRight: '10px',
-                  fontSize: '16px'
-                }}
-              >
-                {editingProduct ? 'Update' : 'Simpan'}
-              </button>
-              <button 
-                type="button"
-                onClick={() => setShowForm(false)}
-                style={{
-                  padding: '10px 20px',
-                  background: '#95a5a6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '16px'
-                }}
-              >
-                Batal
-              </button>
+              <button type="submit" disabled={uploading} style={{ padding: '10px 20px', background: '#3498db', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', marginRight: '10px' }}>{uploading ? 'Mengupload...' : (editingProduct ? 'Update' : 'Simpan')}</button>
+              <button type="button" onClick={() => { setShowForm(false); setEditingProduct(null); setFormData({ name: '', price: '', stock: '', category_id: '', description: '', image: null }); setImagePreview(null); }} style={{ padding: '10px 20px', background: '#95a5a6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Batal</button>
             </div>
           </form>
         </div>
       )}
 
-      {/* TABEL PRODUK */}
-      <div style={{ 
-        background: 'white', 
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        overflow: 'hidden'
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
+      {/* TABEL PRODUK - TANPA KOLOM ID */}
+      <div style={{ background: 'white', borderRadius: '12px', overflow: 'auto', maxHeight: 'calc(100vh - 250px)', border: '1px solid #E6CCB2' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px' }}>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
             <tr style={{ background: '#f8f9fa' }}>
-              <th style={{ padding: '15px', textAlign: 'left' }}>ID</th>
+              <th style={{ padding: '15px', textAlign: 'left' }}>Gambar</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Nama Produk</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Harga</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Stok</th>
+              <th style={{ padding: '15px', textAlign: 'left' }}>Status</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Kategori</th>
               <th style={{ padding: '15px', textAlign: 'left' }}>Aksi</th>
             </tr>
@@ -384,86 +326,32 @@ function ProductsPage() {
           <tbody>
             {products.length === 0 ? (
               <tr>
-                <td colSpan="6" style={{ padding: '30px', textAlign: 'center' }}>
-                  Belum ada produk
-                </td>
+                <td colSpan="7" style={{ padding: '30px', textAlign: 'center' }}>Belum ada produk</td>
               </tr>
             ) : (
               products.map((prod, index) => {
                 const category = categories.find(c => c.id === prod.category_id);
+                const stockStatus = getStockStatus(prod.stock);
                 return (
-                  <tr key={prod.id} style={{ 
-                    borderBottom: '1px solid #dee2e6',
-                    background: index % 2 === 0 ? 'white' : '#f8f9fa'
-                  }}>
-                    <td style={{ padding: '15px' }}>{prod.id}</td>
-                    <td style={{ padding: '15px', fontWeight: 'bold' }}>{prod.name}</td>
-                    <td style={{ padding: '15px', color: '#27ae60', fontWeight: 'bold' }}>
-                      {formatRupiah(prod.price)}
+                  <tr key={prod.id} style={{ background: index % 2 === 0 ? 'white' : '#f8f9fa' }}>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2' }}>
+                      <div style={{ width: '60px', height: '60px', background: '#f5f5f5', borderRadius: '8px', overflow: 'hidden' }}>
+                        <img src={getImageUrl(prod)} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.src = '/images/produk/default.jpg'; }} />
+                      </div>
                     </td>
-                    <td style={{ padding: '15px' }}>
-                      <span style={{
-                        padding: '3px 8px',
-                        borderRadius: '12px',
-                        background: prod.stock < 10 ? '#f8d7da' : '#d4edda',
-                        color: prod.stock < 10 ? '#721c24' : '#155724',
-                        fontWeight: 'bold'
-                      }}>
-                        {prod.stock}
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2', fontWeight: 'bold' }}>{prod.name}</td>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2', color: '#27ae60', fontWeight: 'bold' }}>{formatRupiah(prod.price)}</td>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2' }}>{prod.stock}</td>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2' }}>
+                      <span style={{ padding: '4px 12px', borderRadius: '20px', background: stockStatus.badgeClass === 'danger' ? '#f8d7da' : stockStatus.badgeClass === 'warning' ? '#fff3cd' : '#d4edda', color: stockStatus.badgeClass === 'danger' ? '#721c24' : stockStatus.badgeClass === 'warning' ? '#856404' : '#155724', fontWeight: 'bold' }}>
+                        {stockStatus.text}
                       </span>
                     </td>
-                    <td style={{ padding: '15px' }}>{category?.name || '-'}</td>
-                    <td style={{ padding: '15px' }}>
-                      <button 
-                        onClick={() => setViewDetail(prod.id)}
-                        style={{
-                          padding: '5px 10px',
-                          background: '#3498db',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          marginRight: '5px'
-                        }}
-                      >
-                        Detail
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setEditingProduct(prod);
-                          setFormData({
-                            name: prod.name,
-                            price: prod.price.toString(),
-                            stock: prod.stock.toString(),
-                            category_id: prod.category_id.toString()
-                          });
-                          setShowForm(true);
-                        }}
-                        style={{
-                          padding: '5px 10px',
-                          background: '#f39c12',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '3px',
-                          cursor: 'pointer',
-                          marginRight: '5px'
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(prod.id)}
-                        style={{
-                          padding: '5px 10px',
-                          background: '#e74c3c',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '3px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Hapus
-                      </button>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2' }}>{category?.name || '-'}</td>
+                    <td style={{ padding: '15px', borderBottom: '1px solid #E6CCB2' }}>
+                      <button onClick={() => setViewDetail(prod.id)} style={{ padding: '5px 10px', background: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '5px' }}>Detail</button>
+                      <button onClick={() => { setEditingProduct(prod); setFormData({ name: prod.name, price: prod.price.toString(), stock: prod.stock.toString(), category_id: prod.category_id.toString(), description: prod.description || '', image: null }); setImagePreview(null); setShowForm(true); }} style={{ padding: '5px 10px', background: '#f39c12', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '5px' }}>Edit</button>
+                      <button onClick={() => handleDelete(prod.id)} style={{ padding: '5px 10px', background: '#e74c3c', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Hapus</button>
                     </td>
                   </tr>
                 );

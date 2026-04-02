@@ -6,6 +6,7 @@ function ProductCard({ product }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [showQuantity, setShowQuantity] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -15,12 +16,21 @@ function ProductCard({ product }) {
     }).format(number);
   };
 
+  // 🔥 PERBAIKAN: Fungsi untuk mendapatkan URL gambar dari BACKEND
+  const getImageUrl = () => {
+    if (product.image_url) {
+      return `http://localhost:3000/images/produk/${product.image_url}`;
+    }
+    // Fallback ke default di frontend
+    return '/images/produk/default.jpg';
+  };
+
   // Tentukan status stok
   const getStockStatus = () => {
-    if (product.stock === 0) return { text: 'Stok Habis', color: '#e74c3c', class: 'habis' };
-    if (product.stock < 5) return { text: 'Stok Kritis', color: '#e67e22', class: 'kritis' };
-    if (product.stock < 10) return { text: 'Stok Menipis', color: '#f39c12', class: 'menipis' };
-    return { text: 'Tersedia', color: '#27ae60', class: 'tersedia' };
+    if (product.stock === 0) return { text: 'Stok Habis', class: 'habis' };
+    if (product.stock < 5) return { text: 'Stok Kritis', class: 'kritis' };
+    if (product.stock < 10) return { text: 'Stok Menipis', class: 'menipis' };
+    return { text: 'Tersedia', class: 'tersedia' };
   };
 
   const stockStatus = getStockStatus();
@@ -49,11 +59,10 @@ function ProductCard({ product }) {
     <div className="product-card">
       <div className="product-image">
         <img 
-          src={`https://source.unsplash.com/300x200/?pottery,ceramic,clay&sig=${product.id}`} 
+          src={!imageError ? getImageUrl() : '/images/produk/default.jpg'}
           alt={product.name}
-          onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/300x200?text=Produk+Gerabah';
-          }}
+          onError={() => setImageError(true)}
+          className="product-img"
         />
         <span className={`stock-badge ${stockStatus.class}`}>
           {stockStatus.text}

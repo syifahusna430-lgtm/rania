@@ -26,6 +26,14 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Fungsi untuk mendapatkan URL gambar dari backend
+  const getImageUrl = (product) => {
+    if (product.image_url) {
+      return `http://localhost:3000/images/produk/${product.image_url}`;
+    }
+    return '/images/produk/default.jpg';
+  };
+
   // Tambah item ke keranjang
   const addToCart = (product, quantity = 1) => {
     setCartItems(prevItems => {
@@ -61,7 +69,8 @@ export const CartProvider = ({ children }) => {
           price: product.price, 
           quantity,
           stock: product.stock,
-          image: `https://source.unsplash.com/100x100/?pottery,ceramic&sig=${product.id}`
+          image_url: product.image_url, // 🔥 TAMBAHKAN INI - SIMPAN URL GAMBAR
+          image: getImageUrl(product)    // 🔥 TAMBAHKAN INI - URL LENGKAP
         }];
       }
     });

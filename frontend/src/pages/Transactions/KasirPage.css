@@ -64,7 +64,7 @@
   height: calc(100vh - 120px);
 }
 
-/* Left Panel - Products */
+/* LEFT PANEL - PRODUCTS */
 .products-panel {
   flex: 1.5;
   background: #FAF0E6;
@@ -122,7 +122,7 @@
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
 }
 
@@ -133,6 +133,9 @@
   box-shadow: 0 2px 8px rgba(139, 90, 43, 0.1);
   border: 1px solid #E6CCB2;
   transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .product-item:hover {
@@ -140,22 +143,49 @@
   box-shadow: 0 6px 16px rgba(139, 90, 43, 0.2);
 }
 
+.product-image-container {
+  width: 100%;
+  height: 150px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E6CCB2;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.product-item:hover .product-image {
+  transform: scale(1.05);
+}
+
+.product-info {
+  text-align: center;
+}
+
 .product-info h3 {
-  margin: 0 0 8px;
+  margin: 0 0 5px;
   color: #5D3A1A;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .product-price {
   color: #8B5A2B;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 5px 0;
 }
 
 .product-stock {
   color: #27ae60;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin: 5px 0;
 }
 
@@ -165,33 +195,25 @@
 }
 
 .product-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  margin-top: 5px;
 }
 
-/* TOMBOL TAMBAH BARU - MENGGANTIKAN GREEN/RED */
 .btn-add {
   width: 100%;
-  padding: 12px;
+  padding: 8px;
   background: #8B5A2B;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
+  font-size: 0.9rem;
 }
 
 .btn-add:hover:not(:disabled) {
   background: #C49A6C;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(139, 90, 43, 0.3);
 }
 
 .btn-add:disabled {
@@ -199,12 +221,7 @@
   color: #8B5A2B;
   cursor: not-allowed;
   opacity: 0.6;
-  transform: none;
-  box-shadow: none;
 }
-
-/* Hapus style btn-green dan btn-red jika ada */
-/* .btn-green, .btn-red { display: none; } */
 
 .no-products {
   text-align: center;
@@ -213,13 +230,13 @@
   font-style: italic;
 }
 
-/* Right Panel - Cart */
+/* RIGHT PANEL - CART */
 .cart-panel {
   flex: 1;
   min-width: 380px;
 }
 
-/* Loading */
+/* LOADING */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -244,7 +261,7 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Responsive */
+/* RESPONSIVE */
 @media (max-width: 1024px) {
   .kasir-content {
     flex-direction: column;
@@ -256,7 +273,7 @@
   }
   
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
 }
 
@@ -273,5 +290,9 @@
   
   .product-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .product-image-container {
+    height: 120px;
   }
 }

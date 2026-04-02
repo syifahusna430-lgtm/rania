@@ -5,27 +5,24 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  upload
 } from "../Controllers/productController.js";
 
 import { authenticate, authorizeRoles } from "../middleware/authorization.js";
 
 const router = express.Router();
 
-// ============= PUBLIC / SEMUA ROLE BISA AKSES =============
-// GET products - semua role (admin, kasir, pembeli) bisa lihat
+// GET products - semua role bisa lihat
 router.get("/", authenticate, authorizeRoles("admin", "kasir", "pembeli"), getAllProducts);
-
-// GET product by id - semua role bisa lihat
 router.get("/:id", authenticate, authorizeRoles("admin", "kasir", "pembeli"), getProductById);
 
-// ============= HANYA ADMIN =============
-// POST /products - hanya admin
-router.post("/", authenticate, authorizeRoles("admin"), createProduct);
+// POST - hanya admin (dengan upload file)
+router.post("/", authenticate, authorizeRoles("admin"), upload.single('image'), createProduct);
 
-// PUT /products/:id - hanya admin
-router.put("/:id", authenticate, authorizeRoles("admin"), updateProduct);
+// PUT - hanya admin (dengan upload file)
+router.put("/:id", authenticate, authorizeRoles("admin"), upload.single('image'), updateProduct);
 
-// DELETE /products/:id - hanya admin
+// DELETE - hanya admin
 router.delete("/:id", authenticate, authorizeRoles("admin"), deleteProduct);
 
 export default router;
